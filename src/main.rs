@@ -8,6 +8,7 @@ use actix;
 use actix_web::{server, App, HttpRequest, Responder};
 
 mod logging;
+mod model;
 mod vizceral;
 
 fn index(req: &HttpRequest) -> impl Responder {

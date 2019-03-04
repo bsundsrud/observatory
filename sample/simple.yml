@@ -1,0 +1,18 @@
+regions:
+  - name: Global
+    entry_point: foo
+    nodes:
+      - name: foo
+        entry_point: foo-1
+        nodes:
+          - name: foo-1
+          - name: foo-2
+        connections:
+          - source: foo-1
+            targets:
+              - foo-2
+      - name: bar
+    connections:
+      - source: foo
+        targets:
+          - bar

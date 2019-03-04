@@ -7,13 +7,11 @@ use slog_envlogger;
 use actix;
 use actix_web::{server, App, HttpRequest, Responder};
 
+mod api;
+mod config;
 mod logging;
 mod model;
 mod vizceral;
-
-fn index(req: &HttpRequest) -> impl Responder {
-    "Hello, World"
-}
 
 fn main() {
     ::std::env::set_var("RUST_LOG", "actix_web=info");
@@ -22,13 +20,10 @@ fn main() {
     let logger = logging::root_logger();
 
     let sys = actix::System::new("observatory");
-
-    let web_logger = logger.new(o!("context" => "request"));
-
+    let service_logger = logger.clone();
     server::new(move || {
-        App::new()
-            .middleware(logging::RequestLogger::new(web_logger.clone()))
-            .resource("/", |r| r.f(index))
+        let logger = service_logger.clone();
+        api::get_app(logger)
     })
     .bind("127.0.0.1:8081")
     .unwrap()

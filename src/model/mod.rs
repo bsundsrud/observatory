@@ -128,6 +128,16 @@ impl World {
     pub fn graph(&self, name: &str) -> Option<&Node> {
         self.graphs.get(name)
     }
+
+    pub fn graph_names(&self) -> Vec<String> {
+        let mut keys = self
+            .graphs
+            .keys()
+            .map(|k| k.to_string())
+            .collect::<Vec<String>>();
+        keys.sort();
+        keys
+    }
 }
 
 fn graph_name(name: &str, parent: Option<&str>) -> String {
@@ -228,9 +238,9 @@ pub struct Metrics {
 impl Metrics {
     pub fn empty() -> Metrics {
         Metrics {
-            normal: 0.0,
-            warning: 0.0,
-            danger: 0.0,
+            normal: 100.0,
+            warning: 10.0,
+            danger: 1.0,
         }
     }
 

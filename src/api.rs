@@ -2,8 +2,9 @@ use crate::config::FileConfig;
 use crate::logging;
 use crate::model::World;
 use crate::vizceral::types::VizceralNode;
-use actix_web::{dev::Resource, App, HttpRequest, HttpResponse, Path, Responder};
-use serde_derive::Deserialize;
+use actix_web::middleware::cors::Cors;
+use actix_web::{App, HttpRequest, HttpResponse, Path, Responder};
+use serde_derive::{Deserialize, Serialize};
 use slog::Logger;
 use std::fs::File;
 use std::sync::{Arc, RwLock};
@@ -39,6 +40,12 @@ impl GraphState {
         }
     }
 
+    pub fn graph_names(&self) -> Vec<String> {
+        let graph = self.graphs.clone();
+        let graph = graph.read().unwrap();
+        graph.graph_names()
+    }
+
     pub fn to_vizceral(&self, name: &str) -> Option<VizceralNode> {
         let graph = self.graphs.clone();
         let graph = graph.read().unwrap();
@@ -51,6 +58,11 @@ pub struct StateParams {
     name: String,
 }
 
+#[derive(Debug, Serialize)]
+pub struct GraphList {
+    graphs: Vec<String>,
+}
+
 pub fn state_for_name(
     (req, params): (HttpRequest<ObservatoryState>, Path<StateParams>),
 ) -> impl Responder {
@@ -61,12 +73,22 @@ pub fn state_for_name(
     }
 }
 
+pub fn get_states(req: HttpRequest<ObservatoryState>) -> impl Responder {
+    HttpResponse::Ok().json(GraphList {
+        graphs: req.state().graphs.graph_names(),
+    })
+}
+
 pub fn get_app(logger: Logger) -> App<ObservatoryState> {
     let web_logger = logger.new(o!("context" => "request"));
 
     App::with_state(ObservatoryState::new(logger.clone()))
         .middleware(logging::RequestLogger::new(web_logger))
-        .resource("/api/state/{name}", |r: &mut Resource<_>| {
-            r.get().with(state_for_name)
+        .configure(|app| {
+            Cors::for_app(app)
+                .send_wildcard()
+                .resource("/api/state/{name}", |r| r.get().with(state_for_name))
+                .resource("/api/state", |r| r.get().with(get_states))
+                .register()
         })
 }

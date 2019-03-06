@@ -1,26 +1,19 @@
 import m from "mithril";
 import traffic from './data/static';
-import VizceralComponent from './vizceral/component';
+import VizceralComponent from './components/vizceralComponent';
+import normalize from 'normalize.css';
 import style from './style.css';
-var Data = {
-    state: {},
-    fetch() {
-        m.request({
-            method: "GET",
-            url: "http://localhost:8081/api/state/Global"
-        }).then((resp) => Data.state = resp);
-    }
-};
+import ObservatoryState from './state/observatory';
+import ObservatoryComponent from './components/observatoryComponent';
+
+var State = new ObservatoryState("http://localhost:8081");
 
 class MainComponent {
-    oninit() {
-        Data.fetch()
-    }
+
     view(vnode) {
-        return m(VizceralComponent, { 
-            traffic: Data.state,
-            allowDraggingOfNodes: true
-         });
+        return m(ObservatoryComponent, {
+            state: State
+        });
     }
 }
 

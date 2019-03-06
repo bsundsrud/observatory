@@ -83,7 +83,7 @@ impl From<&Node> for VizceralNode {
                     .node_references()
                     .map(|(_idx, n)| VizceralNode::from(n))
                     .collect();
-                let connections = g
+                let connections: Vec<VizceralConnection> = g
                     .graph()
                     .edge_references()
                     .map(|edge_ref| {
@@ -98,6 +98,15 @@ impl From<&Node> for VizceralNode {
                         }
                     })
                     .collect();
+                let max_volume: f64 = connections
+                    .iter()
+                    .filter_map(|c| c.metrics.as_ref())
+                    .map(|m| {
+                        m.normal.unwrap_or(0.0) + m.warning.unwrap_or(0.0) + m.danger.unwrap_or(0.0)
+                    })
+                    .sum();
+                let max_volume = max_volume * 2.0;
+
                 let renderer = if g.is_root() {
                     VizceralRenderer::Global
                 } else {
@@ -110,7 +119,7 @@ impl From<&Node> for VizceralNode {
                     display_name: Some(g.display_name().to_string()),
                     entry_node: Some(g.entry_point().to_string()),
                     updated: None,
-                    max_volume: None,
+                    max_volume: Some(max_volume.round() as i64),
                     class: None,
                     notices: None,
                     nodes: Some(nodes),

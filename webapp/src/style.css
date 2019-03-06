@@ -2,9 +2,17 @@ html {
     min-height: 100%;
     height: 100%;
     --colorPageBackground: rgb(45, 45, 45);
+    --colorControlsBackground: #a3a3a3;
+    --colorButtonBackground: #bfbfbf;
+    --colorButtonText: #111;
+    --colorButtonBorder: #555;
+    --colorButtonBackgroundHighlight: #efefef;
+    --colorButtonTextHighlight: #000;
+    --colorButtonBorderHighlight: #333;
 }
 body {
     position: relative;
     height: 100%;
     background: var(--colorPageBackground);
+    font-family: sans serif;
 }

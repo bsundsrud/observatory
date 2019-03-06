@@ -2,7 +2,7 @@ import Vizceral from 'vizceral';
 import m from 'mithril';
 import { isEqual, merge } from 'lodash';
 
-import style from './style.css';
+import style from './vizceralComponent.css';
 
 function getPerformanceNow() {
     const g = window;
@@ -27,7 +27,7 @@ class VizceralComponent {
         return m("div.vizceral", [
             m(VizceralCanvasComponent, vnode.attrs),
             m("div.vizceral-notice")
-        ])
+        ]);
     }
 }
 
@@ -55,6 +55,7 @@ const defaults = {
 
 class VizceralCanvasComponent {
     oncreate(vnode) {
+        console.log("Creating new Vizceral");
         const props = merge(defaults, vnode.attrs);
         this.vizceral = new Vizceral(vnode.dom, props.targetFramerate);
         this.updateStyles(props.styles);
@@ -83,6 +84,7 @@ class VizceralCanvasComponent {
             this.vizceral.animate();
             this.vizceral.updateBoundingRectCache();
         }, 0);
+
     }
 
     onbeforeupdate(vnode, old) {
@@ -91,8 +93,10 @@ class VizceralCanvasComponent {
         if (!isEqual(nextProps.styles, oldProps.styles)) {
             this.updateStyles(nextProps.styles);
         }
+        
         if (!isEqual(nextProps.view, oldProps.view)
             || !isEqual(nextProps.objectToHighlight, oldProps.objectToHighlight)) {
+            console.log("changing view from", oldProps.view, "to", nextProps.view);
             this.vizceral.setView(nextProps.view, nextProps.objectToHighlight);
         }
 
@@ -122,6 +126,7 @@ class VizceralCanvasComponent {
         nextProps.traffic.updated = nextProps.traffic.updated || Date.now();
         if (!oldProps.traffic.nodes
             || nextProps.traffic.updated > (oldProps.traffic.updated || 0)) {
+            console.log("Updating traffic", nextProps.traffic);
             this.vizceral.updateData(nextProps.traffic);
         }
     }
@@ -145,7 +150,7 @@ class VizceralCanvasComponent {
                 width: "100%",
                 height: "100%"
             }
-        })
+        });
     }
 }
 

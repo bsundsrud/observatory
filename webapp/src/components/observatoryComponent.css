@@ -1,0 +1,43 @@
+.observatory {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.observatory-controls {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    top: 0;
+    background: var(--colorControlsBackground);
+    height: 2em;
+}
+
+.observatory-controls a.button {
+    cursor: pointer;
+    border: 1px solid var(--colorButtonBorder);
+    border-radius: 5px;
+    padding: 0.3em;
+    background: var(--colorButtonBackground);
+    color: var(--colorButtonText);
+}
+.observatory-controls a.button:hover {
+    border-color: var(--colorButtonBorderHighlight);
+    background: var(--colorButtonBackgroundHighlight);
+    color: var(--colorButtonTextHighlight);
+}
+
+.observatory-controls .observatory-breadcrumb span {
+    padding: 0;
+    margin: 0;
+    padding-right: 1em;
+}
+
+.observatory-controls .observatory-breadcrumb {
+    padding: 0;
+    margin: 0;
+    padding-left: 1em;
+    display: inline;
+}
